@@ -87,14 +87,17 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
             @Override
             public void onClick(View v) {
 
-
+                al.clear();
+                alPants.clear();
+                myAppAdapter.notifyDataSetChanged();
+                myAppAdapterPants.notifyDataSetChanged();
 
                 dialog.setMessage("Shuffling Pants And Shirts");
                 dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
                 dialog.setCancelable(false);
                 dialog.show();
 
-                new CountDownTimer(3000, 1000) {
+                new CountDownTimer(1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
                         //nothing
@@ -103,21 +106,28 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                     public void onFinish() {
 
                         dialog.dismiss();
-                        alPants.clear();
-                        al.clear();
+                        /*alPants.clear();
+                        al.clear();*/
                         al = new ArrayList<Data>();
                         al = Data.getRandomShirts();
-                        //myAppAdapter.notifyDataSetChanged();
+                        myAppAdapter.notifyDataSetChanged();
                         alPants = new ArrayList<Data>();
                         alPants = Data.getRandomPants();
+                        myAppAdapterPants.notifyDataSetChanged();
+                        Log.e("Size of al is,",String.valueOf(al.size()));
+                        Log.e("Size of al is,",String.valueOf(al.size()));
+                        Log.e("Size of al is,",String.valueOf(al.size()));
+                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
+                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
+                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
                         //myAppAdapterPants.notifyDataSetChanged();
                         flingCallerShirt();
-                        RotateAnimation ra =new RotateAnimation(0, 360);
+                        /*RotateAnimation ra =new RotateAnimation(0, 360);
                         ra.setFillAfter(true);
                         ra.setDuration(2);
 
                         flingContainer.startAnimation(ra);
-                        flingContainerPants.startAnimation(ra);
+                        flingContainerPants.startAnimation(ra);*/
                     }
                 }.start();
 
@@ -251,9 +261,9 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
 
 
         myAppAdapter = new MyAppAdapter(al, MainActivity.this);
-        myAppAdapter.notifyDataSetChanged();
+
         myAppAdapterPants = new MyAppAdapterPants(alPants, MainActivity.this);
-        myAppAdapterPants.notifyDataSetChanged();
+
         flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame_shirts);
         flingContainerPants = (SwipeFlingAdapterView) findViewById(R.id.frame_jeans);
 
@@ -412,8 +422,37 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                         try{
                         Uri uriDb = getApplicationContext().getContentResolver().insert(
                                 UserProvider.CONTENT_URI_SHIRTS, values);
-                            al.add(al.size(), new Data(uri, id));
-                        myAppAdapter.notifyDataSetChanged();
+
+                            final ArrayList<Data> newListShirt = new ArrayList<Data>();
+
+                            newListShirt.add(0,new Data(uri,id));
+
+                            al.clear();
+
+                            myAppAdapter.notifyDataSetChanged();
+
+
+                            dialog.setMessage("Refreshing Shirts");
+                            dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
+                            dialog.setCancelable(false);
+                            dialog.show();
+
+                            new CountDownTimer(500, 250) {
+
+                                public void onTick(long millisUntilFinished) {
+                                    //nothing
+                                }
+
+                                public void onFinish() {
+
+                                    dialog.dismiss();
+
+                                    al = new ArrayList<Data>();
+                                    al = newListShirt;
+                                    myAppAdapter.notifyDataSetChanged();
+                                    flingCallerShirt();
+                                }
+                            }.start();
 
                         }
                         catch (Exception e){
@@ -429,8 +468,41 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                         try {
                             Uri uriDb = getApplicationContext().getContentResolver().insert(
                                     UserProvider.CONTENT_URI_SHIRTS, values);
-                            al.add(al.size(), new Data(uri, id));
+
+                            final ArrayList<Data> newListShirt = new ArrayList<Data>();
+
+                            newListShirt.add(0,new Data(uri,id));
+
+                            for(int i = 1; i< al.size();i++){
+                                newListShirt.add(i,al.get(i-1));
+                            }
+
+                            al.clear();
+
                             myAppAdapter.notifyDataSetChanged();
+
+
+                            dialog.setMessage("Refreshing Shirts");
+                            dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
+                            dialog.setCancelable(false);
+                            dialog.show();
+
+                            new CountDownTimer(1000, 500) {
+
+                                public void onTick(long millisUntilFinished) {
+                                    //nothing
+                                }
+
+                                public void onFinish() {
+
+                                    dialog.dismiss();
+
+                                    al = new ArrayList<Data>();
+                                    al = newListShirt;
+                                    myAppAdapter.notifyDataSetChanged();
+                                    flingCallerShirt();
+                                }
+                            }.start();
                         }
                         catch (Exception e){
                             Toast.makeText(getApplicationContext(),"Already added previously",Toast.LENGTH_SHORT).show();
@@ -471,8 +543,38 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                         Uri uriDb = getApplicationContext().getContentResolver().insert(
                                 UserProvider.CONTENT_URI_PANTS, values);
 
-                        alPants.add(alPants.size(), new Data(uri, id));
-                        myAppAdapterPants.notifyDataSetChanged();
+                         final ArrayList<Data> newListPants = new ArrayList<Data>();
+
+                         newListPants.add(0,new Data(uri,id));
+
+                         alPants.clear();
+
+                         myAppAdapterPants.notifyDataSetChanged();
+
+
+                         dialog.setMessage("Refreshing Pants");
+                         dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
+                         dialog.setCancelable(false);
+                         dialog.show();
+
+                         new CountDownTimer(1000, 500) {
+
+                             public void onTick(long millisUntilFinished) {
+                                 //nothing
+                             }
+
+                             public void onFinish() {
+
+                                 dialog.dismiss();
+
+                                 alPants = new ArrayList<Data>();
+                                 alPants = newListPants;
+                                 myAppAdapterPants.notifyDataSetChanged();
+                                 flingCallerShirt();
+                             }
+                         }.start();
+
+
                     }
                     catch (Exception e){
                         Toast.makeText(getApplicationContext(),"Already added previously",Toast.LENGTH_SHORT).show();
@@ -488,8 +590,43 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                         Uri uriDb = getApplicationContext().getContentResolver().insert(
                                 UserProvider.CONTENT_URI_PANTS, values);
 
-                        alPants.add(alPants.size(), new Data(uri, id));
-                        myAppAdapterPants.notifyDataSetChanged();
+                         final ArrayList<Data> newListPants = new ArrayList<Data>();
+
+                         newListPants.add(0,new Data(uri,id));
+
+                         for(int i = 1; i< alPants.size();i++){
+                             newListPants.add(i,alPants.get(i-1));
+                         }
+
+                         alPants.clear();
+
+                         myAppAdapterPants.notifyDataSetChanged();
+
+
+                         dialog.setMessage("Refreshing Pants");
+                         dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
+                         dialog.setCancelable(false);
+                         dialog.show();
+
+                         new CountDownTimer(1000, 500) {
+
+                             public void onTick(long millisUntilFinished) {
+                                 //nothing
+                             }
+
+                             public void onFinish() {
+
+                                 dialog.dismiss();
+
+                                 alPants = new ArrayList<Data>();
+                                 alPants = newListPants;
+                                 myAppAdapterPants.notifyDataSetChanged();
+                                 flingCallerShirt();
+                             }
+                         }.start();
+
+                        /*alPants.add(alPants.size(), new Data(uri, id));
+                        myAppAdapterPants.notifyDataSetChanged();*/
                     }
                     catch (Exception e){
                         Toast.makeText(getApplicationContext(),"Already added previously",Toast.LENGTH_SHORT).show();
