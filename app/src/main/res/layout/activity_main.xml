@@ -5,9 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context=".MainActivity">
-
-
-    <!-- activity view -->
     <FrameLayout
         android:background="@color/primaryColorDark"
         android:layout_width="match_parent"
