@@ -81,15 +81,28 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
         Intent intent = new Intent(this, ScheduleCombination.class);
         alarmIntent = PendingIntent.getService(this, 0, intent, 0);
 
-        // Set the alarm to start at approximately 6:00 a.m.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 06);
+        Calendar firingCal= Calendar.getInstance();
+        Calendar currentCal = Calendar.getInstance();
 
-// With setInexactRepeating(), you have to use one of the AlarmManager interval
-// constants--in this case, AlarmManager.INTERVAL_DAY.
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        firingCal.set(Calendar.HOUR, 6); // At the hour you wanna fire
+        firingCal.set(Calendar.MINUTE, 0); // Particular minute
+        firingCal.set(Calendar.SECOND, 0); // particular second
+
+        long intendedTime = firingCal.getTimeInMillis();
+        long currentTime = currentCal.getTimeInMillis();
+
+        if(intendedTime >= currentTime){
+            // you can add buffer time too here to ignore some small differences in milliseconds
+            // set from today
+            alarmMgr.setRepeating(AlarmManager.RTC, intendedTime, AlarmManager.INTERVAL_DAY, alarmIntent);
+        } else{
+            // set from next day
+            // you might consider using calendar.add() for adding one day to the current day
+            firingCal.add(Calendar.DAY_OF_MONTH, 1);
+            intendedTime = firingCal.getTimeInMillis();
+
+            alarmMgr.setRepeating(AlarmManager.RTC, intendedTime, AlarmManager.INTERVAL_DAY, alarmIntent);
+        }
 
 
         dialog = new ProgressDialog(this);
@@ -148,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
         addShirtsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 dispatchPhotoSelectionIntent(REQUEST_IMAGE_SELECTOR_SHIRTS);
 
             }
@@ -227,12 +239,11 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
 
 
                 al = (ArrayList<Data>) savedInstanceState.getSerializable("shirts");
+
             }
 
             if(savedInstanceState.getSerializable("pants") != null){
-
-
-                alPants = (ArrayList<Data>) savedInstanceState.getSerializable("pants");
+                    alPants = (ArrayList<Data>) savedInstanceState.getSerializable("pants");
             }
 
         }
@@ -479,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
 
                             newListShirt.add(0,new Data(uri,id));
 
-                            for(int i = 1; i< al.size();i++){
+                            for(int i = 1; i<= al.size();i++){
                                 newListShirt.add(i,al.get(i-1));
                             }
 
@@ -506,6 +517,7 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                                     al = new ArrayList<Data>();
                                     al = newListShirt;
                                     myAppAdapter.notifyDataSetChanged();
+
                                     flingCallerShirt();
                                 }
                             }.start();
@@ -600,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
 
                          newListPants.add(0,new Data(uri,id));
 
-                         for(int i = 1; i< alPants.size();i++){
+                         for(int i = 1; i<= alPants.size();i++){
                              newListPants.add(i,alPants.get(i-1));
                          }
 
