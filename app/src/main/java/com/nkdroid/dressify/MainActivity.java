@@ -100,34 +100,20 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                 new CountDownTimer(1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
-                        //nothing
+
                     }
 
                     public void onFinish() {
 
                         dialog.dismiss();
-                        /*alPants.clear();
-                        al.clear();*/
                         al = new ArrayList<Data>();
                         al = Data.getRandomShirts();
                         myAppAdapter.notifyDataSetChanged();
                         alPants = new ArrayList<Data>();
                         alPants = Data.getRandomPants();
                         myAppAdapterPants.notifyDataSetChanged();
-                        Log.e("Size of al is,",String.valueOf(al.size()));
-                        Log.e("Size of al is,",String.valueOf(al.size()));
-                        Log.e("Size of al is,",String.valueOf(al.size()));
-                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
-                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
-                        Log.e("Size of alPants is,",String.valueOf(alPants.size()));
-                        //myAppAdapterPants.notifyDataSetChanged();
                         flingCallerShirt();
-                        /*RotateAnimation ra =new RotateAnimation(0, 360);
-                        ra.setFillAfter(true);
-                        ra.setDuration(2);
 
-                        flingContainer.startAnimation(ra);
-                        flingContainerPants.startAnimation(ra);*/
                     }
                 }.start();
 
@@ -163,16 +149,12 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                         Toast.makeText(getApplicationContext(),"Combination is incorrect! Check whether both shirt and pant are there in the combination",Toast.LENGTH_LONG).show();
                     }
                     else {
-
-
                         ContentValues values = new ContentValues();
 
                         int shirtId = al.get(0).getId();
                         String sdata = al.get(0).getUri();
                         int pantid = alPants.get(0).getId();
                         String pdata = alPants.get(0).getUri();
-
-
                         values.put(UserProvider._SHIRT_ID_FAV, shirtId);
                         values.put(UserProvider._SHIRT_DATA_FAV, sdata);
                         values.put(UserProvider._PANTS_ID_FAV, pantid);
@@ -625,8 +607,7 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
                              }
                          }.start();
 
-                        /*alPants.add(alPants.size(), new Data(uri, id));
-                        myAppAdapterPants.notifyDataSetChanged();*/
+
                     }
                     catch (Exception e){
                         Toast.makeText(getApplicationContext(),"Already added previously",Toast.LENGTH_SHORT).show();
@@ -852,59 +833,6 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
         public void swapItems(List<Data> items) {
             this.adapterList = items;
             notifyDataSetChanged();
-        }
-    }
-
-    private class AsyncListViewLoaderTiled extends AsyncTask<String, Void, Void> {
-        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-        InputStreamReader inputStream = null;
-        String result = "";
-        String listName;
-
-        @Override
-        protected void onPostExecute(Void xyz) {
-            super.onPostExecute(xyz);
-
-            if ((dialog != null) && dialog.isShowing()) {
-                dialog.dismiss();
-
-                myAppAdapter.swapItems(al);
-
-            }
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.setMessage("Fetching Movies and Songs for the first time");
-            dialog.setProgressStyle(ProgressDialog.THEME_DEVICE_DEFAULT_DARK);
-            dialog.setCancelable(false);
-            dialog.show();
-
-
-        }
-
-        @Override
-        protected Void doInBackground(String... params) {
-
-
-            new CountDownTimer(3000, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    //nothing
-                }
-
-                public void onFinish() {
-                    al = Data.getRandomShirts();
-                    myAppAdapter.notifyDataSetChanged();
-                    alPants = Data.getRandomPants();
-                    myAppAdapterPants.notifyDataSetChanged();
-                }
-            }.start();
-
-            return null;
-
         }
     }
 
