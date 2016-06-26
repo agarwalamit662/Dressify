@@ -60,8 +60,7 @@
                 app:cb_pressedRingWidth="8dip"
                 />
         </FrameLayout>
-
-    </LinearLayout>
+        </LinearLayout>
         <at.markushi.ui.CircleButton
             android:id="@+id/toggleCombinationButton"
             android:layout_width="100dp"

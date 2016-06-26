@@ -1,6 +1,8 @@
 package com.nkdroid.dressify;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -29,10 +31,12 @@ import com.bumptech.glide.Glide;
 import com.nkdroid.dressify.data.Data;
 import com.nkdroid.dressify.data.UserProvider;
 import com.nkdroid.dressify.tindercard.FlingCardListener;
+import com.nkdroid.dressify.tindercard.ScheduleCombination;
 import com.nkdroid.dressify.tindercard.SwipeFlingAdapterView;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import at.markushi.ui.CircleButton;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
     public static MyAppAdapterPants myAppAdapterPants;
     public static ViewHolder viewHolder;
     public static ViewHolderPants viewHolderPants;
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
     private ArrayList<Data> al;
     private ArrayList<Data> alPants;
     private SwipeFlingAdapterView flingContainer;
@@ -67,6 +73,24 @@ public class MainActivity extends AppCompatActivity implements FlingCardListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+        alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, ScheduleCombination.class);
+        alarmIntent = PendingIntent.getService(this, 0, intent, 0);
+
+        // Set the alarm to start at approximately 6:00 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 06);
+
+// With setInexactRepeating(), you have to use one of the AlarmManager interval
+// constants--in this case, AlarmManager.INTERVAL_DAY.
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+
 
         dialog = new ProgressDialog(this);
         lLayout = (LinearLayout) findViewById(R.id.linearLayout);
